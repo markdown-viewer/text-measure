@@ -1,0 +1,35 @@
+{
+  "name": "@markdown-viewer/text-measure",
+  "version": "1.0.0",
+  "description": "Text measurement utilities for browser and fibjs environments",
+  "type": "module",
+  "main": "lib/index.ts",
+  "types": "lib/index.ts",
+  "exports": {
+    ".": "./lib/index.ts",
+    "./webview-provider": "./lib/webview-provider.ts"
+  },
+  "files": [
+    "lib",
+    "README.md"
+  ],
+  "keywords": [
+    "text",
+    "measure",
+    "font",
+    "metrics",
+    "fibjs"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/markdown-viewer/text-measure"
+  },
+  "author": "",
+  "license": "MIT",
+  "engines": {
+    "fibjs": ">=0.38.0"
+  },
+  "publishConfig": {
+    "access": "public"
+  }
+}
