@@ -4,7 +4,7 @@
  * Provides text measurement utilities for both browser and server-side environments.
  */
 
-export { DEFAULT_FONT_FAMILY, setDefaultFontFamily } from './constants.ts';
+export { DEFAULT_FONT_FAMILY, DEFAULT_FONT_SIZE, setDefaultFontFamily } from './constants.ts';
 
 export {
   type TextLayoutResult,
