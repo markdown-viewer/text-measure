@@ -78,12 +78,65 @@ export interface TextMeasureProvider {
  */
 let textMeasureProvider: TextMeasureProvider | null = null;
 
+// ============================================================================
+// Measurement Cache
+// ============================================================================
+
+/** Maximum number of entries per cache */
+const MAX_CACHE_SIZE = 4096;
+
+/** Cache for measureText results */
+const measureTextCache = new Map<string, { width: number; height: number }>();
+
+/** Cache for measureTextLayout results */
+const measureTextLayoutCache = new Map<string, TextLayoutResult>();
+
+/**
+ * Evict oldest entries when cache exceeds MAX_CACHE_SIZE.
+ * Removes the first half to amortise eviction cost.
+ */
+function evictIfNeeded<T>(cache: Map<string, T>): void {
+  if (cache.size <= MAX_CACHE_SIZE) return;
+  const deleteCount = cache.size >> 1;
+  const iter = cache.keys();
+  for (let i = 0; i < deleteCount; i++) {
+    cache.delete(iter.next().value!);
+  }
+}
+
+/**
+ * Build a cache key from measurement parameters
+ */
+function buildCacheKey(
+  text: string,
+  fontSize: number,
+  fontFamily: string,
+  fontWeight: string,
+  fontStyle: string,
+  isHtml: boolean,
+  containerWidth?: number
+): string {
+  // Use a separator unlikely to appear in text content
+  return `${text}\x00${fontSize}\x00${fontFamily}\x00${fontWeight}\x00${fontStyle}\x00${isHtml ? 1 : 0}${containerWidth !== undefined ? `\x00${containerWidth}` : ''}`;
+}
+
+/**
+ * Clear all measurement caches.
+ * Call this between independent render passes or when the provider changes.
+ */
+export function clearMeasureCache(): void {
+  measureTextCache.clear();
+  measureTextLayoutCache.clear();
+}
+
 /**
  * Set global text measurement provider
  * @param provider - Custom provider or null to reset to default
  */
 export function setTextMeasureProvider(provider: TextMeasureProvider | null): void {
   textMeasureProvider = provider;
+  // Provider changed – cached results may no longer be valid
+  clearMeasureCache();
 }
 
 /**
@@ -99,6 +152,7 @@ export function getTextMeasureProvider(): TextMeasureProvider | null {
  */
 export function resetTextMeasureProvider(): void {
   textMeasureProvider = null;
+  clearMeasureCache();
 }
 
 // ============================================================================
@@ -150,6 +204,13 @@ export function measureText(
   if (!text) {
     return { width: 0, height: fontSize };
   }
+
+  // Check cache first
+  const cacheKey = buildCacheKey(text, fontSize, fontFamily, fontWeight, fontStyle, isHtml);
+  const cached = measureTextCache.get(cacheKey);
+  if (cached) {
+    return cached;
+  }
   
   let result: { width: number; height: number };
   
@@ -168,7 +229,9 @@ export function measureText(
       );
     }
   }
-  
+
+  measureTextCache.set(cacheKey, result);
+  evictIfNeeded(measureTextCache);
   return result;
 }
 
@@ -229,6 +292,13 @@ export function measureTextLayout(
     return { width: 0, height: defaultLineHeight, lineCount: 1, lineHeight: defaultLineHeight };
   }
 
+  // Check cache first
+  const cacheKey = buildCacheKey(sourceText, fontSize, fontFamily, fontWeight, fontStyle, isHtml, containerWidth);
+  const cached = measureTextLayoutCache.get(cacheKey);
+  if (cached) {
+    return cached;
+  }
+
   let result: TextLayoutResult;
 
   // Use custom provider if set and supports measureTextLayout
@@ -247,6 +317,8 @@ export function measureTextLayout(
     }
   }
 
+  measureTextLayoutCache.set(cacheKey, result);
+  evictIfNeeded(measureTextLayoutCache);
   return result;
 }
 

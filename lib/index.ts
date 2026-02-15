@@ -12,6 +12,7 @@ export {
   setTextMeasureProvider,
   getTextMeasureProvider,
   resetTextMeasureProvider,
+  clearMeasureCache,
   measureText,
   measureMultilineText,
   measureTextLayout,
