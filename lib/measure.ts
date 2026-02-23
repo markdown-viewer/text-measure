@@ -160,7 +160,7 @@ export function resetTextMeasureProvider(): void {
 // ============================================================================
 
 import { measureText as measureTextWithDom } from './webview-measure.ts';
-import { DEFAULT_FONT_FAMILY } from './constants.ts';
+import { DEFAULT_FONT_FAMILY, DEFAULT_FONT_SIZE } from './constants.ts';
 
 // Detect if we're in a browser environment with DOM support
 const isBrowser = typeof window !== 'undefined' && typeof document !== 'undefined';
@@ -201,6 +201,9 @@ export function measureText(
   fontStyle: string = 'normal',
   isHtml: boolean = false
 ): { width: number; height: number } {
+  // Guard against undefined/NaN/0 fontSize — fall back to DEFAULT_FONT_SIZE
+  if (!fontSize || !isFinite(fontSize)) fontSize = DEFAULT_FONT_SIZE;
+
   if (!text) {
     return { width: 0, height: fontSize };
   }
@@ -283,6 +286,9 @@ export function measureTextLayout(
   containerWidth?: number,
   isHtml: boolean = false
 ): TextLayoutResult {
+  // Guard against undefined/NaN/0 fontSize — fall back to DEFAULT_FONT_SIZE
+  if (!fontSize || !isFinite(fontSize)) fontSize = DEFAULT_FONT_SIZE;
+
   const normalizedText = isHtml
     ? text.replace(/(?:<br\s*\/?>|&#10;|&#x0*a;|\r|\n)+$/gi, '')
     : text.replace(/[\r\n]+$/g, '');
