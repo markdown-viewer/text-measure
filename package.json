@@ -6,7 +6,10 @@
   "main": "lib/index.ts",
   "types": "lib/index.ts",
   "exports": {
-    ".": "./lib/index.ts",
+    ".": {
+      "browser": "./lib/index.ts",
+      "default": "./lib/index.node.ts"
+    },
     "./webview-provider": "./lib/webview-provider.ts"
   },
   "files": [
