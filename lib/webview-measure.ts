@@ -36,6 +36,10 @@ export function measureText(
     const isHtmlValue = Boolean(isHtml);
     const hasHtmlTags = isHtmlValue && /<\/?[a-z][\s\S]*?>/i.test(text);
 
+    // Ensure measureDiv is wide enough so that pre-wrap / inline-block
+    // content is never constrained by the viewport or parent width.
+    measureDiv.style.width = '99999px';
+
     measureDiv.innerHTML = '<div id="measure-wrapper" style="display:inline-block;"></div>';
     const wrapper = measureDiv.querySelector('#measure-wrapper') as HTMLElement | null;
     if (!wrapper) {
@@ -105,6 +109,9 @@ export function measureTextLayout(
     measureDiv.style.fontWeight = safeFontWeight;
     measureDiv.style.fontStyle = safeFontStyle;
     measureDiv.style.lineHeight = '1.2';
+    // Ensure measureDiv is wide enough so that pre-wrap / inline-block
+    // content is never constrained by the viewport or parent width.
+    measureDiv.style.width = '99999px';
 
     const decodeEntities = (value: string) => {
       const textarea = document.createElement('textarea');
