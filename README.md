@@ -12,31 +12,14 @@ npm install @markdown-viewer/text-measure
 
 ## Usage
 
-### Basic measurement (with provider)
+### Basic measurement
+
+In fibjs, the WebView-based text measurement provider is **automatically configured** on import — no manual setup needed.
 
 ```ts
-import { setTextMeasureProvider, measureText } from '@markdown-viewer/text-measure';
-
-// Set up a provider first (see below)
-setTextMeasureProvider(myProvider);
+import { measureText } from '@markdown-viewer/text-measure';
 
 const { width, height } = measureText('Hello World', 14, 'Arial');
-```
-
-### fibjs WebView provider
-
-For server-side measurement in fibjs using a headless WebView:
-
-```ts
-import { setTextMeasureProvider } from '@markdown-viewer/text-measure';
-import { createWebViewProvider } from '@markdown-viewer/text-measure/webview-provider';
-
-const provider = createWebViewProvider();
-setTextMeasureProvider(provider);
-
-// ... measure text ...
-
-provider.dispose(); // clean up when done
 ```
 
 ### Layout measurement
@@ -51,14 +34,6 @@ const layout = measureTextLayout('Long text...', 14, 'Arial', 'normal', 'normal'
 ```
 
 ## API
-
-### Provider management
-
-| Function | Description |
-|----------|-------------|
-| `setTextMeasureProvider(provider)` | Set the global text measurement provider |
-| `getTextMeasureProvider()` | Get the current provider (or `null`) |
-| `resetTextMeasureProvider()` | Reset to default (no provider) |
 
 ### Measurement functions
 
@@ -78,9 +53,7 @@ const layout = measureTextLayout('Long text...', 14, 'Arial', 'normal', 'normal'
 
 ### Types
 
-- `TextMeasureProvider` — Interface for custom measurement backends
 - `TextLayoutResult` — `{ width, height, lineCount, lineHeight }`
-- `WebViewTextMeasureProvider` — Extended provider with `dispose()` method
 
 ## License
 
