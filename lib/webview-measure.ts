@@ -68,7 +68,10 @@ export function measureText(
     elements.forEach((el) => {
       const htmlEl = el as HTMLElement;
       htmlEl.style.margin = '0';
-      htmlEl.style.padding = '0';
+      // Preserve table-cell padding: it contributes to the real rendered
+      // table size, so zeroing it underestimates table width/height.
+      const tag = htmlEl.tagName.toLowerCase();
+      if (tag !== 'td' && tag !== 'th') htmlEl.style.padding = '0';
     });
 
     const hasBlocks = hasHtmlTags && Boolean(wrapper.querySelector('div, p, li, ul, ol'));
@@ -173,7 +176,9 @@ export function measureTextLayout(
       elements.forEach((el) => {
         const htmlEl = el as HTMLElement;
         htmlEl.style.margin = '0';
-        htmlEl.style.padding = '0';
+        // Preserve table-cell padding (see measureText for rationale).
+        const tag = htmlEl.tagName.toLowerCase();
+        if (tag !== 'td' && tag !== 'th') htmlEl.style.padding = '0';
       });
       
       // Get computed line height
@@ -229,7 +234,9 @@ export function measureTextLayout(
     elements.forEach((el) => {
       const htmlEl = el as HTMLElement;
       htmlEl.style.margin = '0';
-      htmlEl.style.padding = '0';
+      // Preserve table-cell padding (see measureText for rationale).
+      const tag = htmlEl.tagName.toLowerCase();
+      if (tag !== 'td' && tag !== 'th') htmlEl.style.padding = '0';
     });
 
     // Get computed line height
