@@ -1,6 +1,6 @@
 {
   "name": "@markdown-viewer/text-measure",
-  "version": "1.1.1",
+  "version": "1.1.2",
   "description": "Text measurement utilities for browser and fibjs environments",
   "type": "module",
   "main": "lib/index.ts",
